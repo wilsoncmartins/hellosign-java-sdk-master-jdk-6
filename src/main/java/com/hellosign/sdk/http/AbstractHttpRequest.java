@@ -58,8 +58,6 @@ import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -207,11 +205,12 @@ public abstract class AbstractHttpRequest {
      */
     public long getResponseAsFile(File f) throws HelloSignException {
         long bytesWritten = 0;
-        try {
-            bytesWritten = Files.copy(lastResponseStream, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception e) {
-            throw new HelloSignException(e);
-        }
+//        FIXME this method uses class from java 1.7 need to be changed.
+//        try {
+//            bytesWritten = Files.copy(lastResponseStream, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+//        } catch (Exception e) {
+//            throw new HelloSignException(e); 
+//        }
         return bytesWritten;
     }
 }
