@@ -51,8 +51,10 @@ import java.io.File;
  */
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -61,7 +63,6 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.Scanner;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,15 +207,25 @@ public abstract class AbstractHttpRequest {
      */
     public long getResponseAsFile(File f) throws HelloSignException {
         long bytesWritten = 0;
+        OutputStream outputStream = null;
         try {
-            File temp = new File(f.getAbsolutePath());
-            FileUtils.copyInputStreamToFile(lastResponseStream, temp);
+            // bytesWritten = Files.copy(lastResponseStream, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            outputStream = new FileOutputStream(f);
 
-            if (temp != null)
-                bytesWritten = temp.length();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = lastResponseStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
 
+            bytesWritten = length;
         } catch (Exception e) {
             throw new HelloSignException(e);
+        } finally {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+            }
         }
         return bytesWritten;
     }
