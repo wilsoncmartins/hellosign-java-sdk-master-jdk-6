@@ -206,7 +206,6 @@ public abstract class AbstractHttpRequest {
      */
     public long getResponseAsFile(File f) throws HelloSignException {
         long bytesWritten = 0;
-
         try {
             File temp = new File(f.getAbsolutePath());
             FileUtils.copyInputStreamToFile(lastResponseStream, temp);
