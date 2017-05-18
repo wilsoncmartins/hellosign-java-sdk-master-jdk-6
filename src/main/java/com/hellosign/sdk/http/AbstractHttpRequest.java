@@ -61,6 +61,7 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.Scanner;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -205,12 +206,17 @@ public abstract class AbstractHttpRequest {
      */
     public long getResponseAsFile(File f) throws HelloSignException {
         long bytesWritten = 0;
-//        FIXME this method uses class from java 1.7 need to be changed.
-//        try {
-//            bytesWritten = Files.copy(lastResponseStream, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//        } catch (Exception e) {
-//            throw new HelloSignException(e); 
-//        }
+
+        try {
+            File temp = new File(f.getAbsolutePath());
+            FileUtils.copyInputStreamToFile(lastResponseStream, temp);
+
+            if (temp != null)
+                bytesWritten = temp.length();
+
+        } catch (Exception e) {
+            throw new HelloSignException(e);
+        }
         return bytesWritten;
     }
 }
